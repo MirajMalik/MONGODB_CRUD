@@ -92,7 +92,7 @@ app.post("/products", async (req,res) => {
 // GET: /products -> Return all the products
 app.get('/products', async (req,res) => {
     try{
-         const products = await product.find();  // modelname.find() to find the products from db
+         const products = await product.find().limit(2);  // modelname.find() to find the products from db
          if(products){
             res.status(200).send(products);
          }

@@ -60,7 +60,6 @@ app.get('/',(req,res)=>{
 });
 
 // POST: /products -> create a product
-// GET: /products/:id -> Return a specific product
 app.post("/products", async (req,res) => {
     try{
         // get data from req body
@@ -92,9 +91,39 @@ app.post("/products", async (req,res) => {
 // GET: /products -> Return all the products
 app.get('/products', async (req,res) => {
     try{
-         const products = await product.find().limit(2);  // modelname.find() to find the products from db
+         const products = await product.find();  // modelname.find() to find the products from db
          if(products){
             res.status(200).send(products);
+         }
+         else{
+             res.status(404).send({
+                message : "products not found",
+             });
+         }
+    }catch(error){
+        res.status(500).send({message : error.message});
+    }
+
+    
+});
+
+
+// GET: /products/:id -> Return a specific product
+app.get('/products/:id', async (req,res) => {
+    try{
+         const id = req.params.id;
+         //const product = await product.find({_id: id});   // modelname.find() to find the products from db.Find returns a array.
+         //const product = await product.findOne({_id: id});  // findOne returns object.Returns everything
+         const product = await product.findOne({_id: id}).select({
+            title: 1,
+            _id : 0
+         });                   // for specific things we use select.1 means true .Here only the title will be displayed.0 means dont display.
+
+         res.send(product);
+
+
+         if(product){
+            res.status(200).send(product);
          }
          else{
              res.status(404).send({

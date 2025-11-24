@@ -18,7 +18,10 @@ const productsSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-    price : Number,
+    price : {
+        type : Number,
+        required : true,
+    },
     description : {
         type : String,
         required : true,
@@ -56,6 +59,8 @@ app.get('/',(req,res)=>{
     res.send("We are in the home page");
 });
 
+// POST: /products -> create a product
+// GET: /products/:id -> Return a specific product
 app.post("/products", async (req,res) => {
     try{
         // get data from req body
@@ -82,6 +87,39 @@ app.post("/products", async (req,res) => {
     }
 
 });
+
+
+// GET: /products -> Return all the products
+app.get('/products', async (req,res) => {
+    try{
+         const products = await product.find();  // modelname.find() to find the products from db
+         if(products){
+            res.status(200).send(products);
+         }
+         else{
+             res.status(404).send({
+                message : "products not found",
+             });
+         }
+    }catch(error){
+        res.status(500).send({message : error.message});
+    }
+
+    
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(port, async (req,res) => {
     console.log(`Server is running at http://localhost:${port}`);

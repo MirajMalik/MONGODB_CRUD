@@ -60,70 +60,95 @@ app.get('/',(req,res)=>{
 });
 
 // POST: /products -> create a product
-app.post("/products", async (req,res) => {
-    try{
-        // get data from req body
-        // const title = req.body.title;
-        // const price = req.body.price;
-        // const description = req.body.description;
+// app.post("/products", async (req,res) => {
+//     try{
+//         // get data from req body
+//         // const title = req.body.title;
+//         // const price = req.body.price;
+//         // const description = req.body.description;
 
-        //const{title,price,description} = req.body;
+//         //const{title,price,description} = req.body;
 
-        const newProduct =  new product({   // here product is the model name
-            title : req.body.title,
-            price : req.body.price,
-            description : req.body.description,
-        });
+//         const newProduct =  new product({   // here product is the model name
+//             title : req.body.title,
+//             price : req.body.price,
+//             description : req.body.description,
+//         });
 
-        const productData = await newProduct.save();
+//         const productData = await newProduct.save();
 
-        res.status(201).send(productData);
-
-
-
-    }catch(error){
-        res.status(500).send({message : error.message});
-    }
-
-});
+//         res.status(201).send(productData);
 
 
-// GET: /products -> Return all the products
-app.get('/products', async (req,res) => {
-    try{
-         const products = await product.find();  // modelname.find() to find the products from db
-         if(products){
-            res.status(200).send(products);
-         }
-         else{
-             res.status(404).send({
-                message : "products not found",
-             });
-         }
-    }catch(error){
-        res.status(500).send({message : error.message});
-    }
+
+//     }catch(error){
+//         res.status(500).send({message : error.message});
+//     }
+
+// });
+
+
+// // GET: /products -> Return all the products
+// app.get('/products', async (req,res) => {
+//     try{
+//          const products = await product.find();  // modelname.find() to find the products from db
+//          if(products){
+//             res.status(200).send(products);
+//          }
+//          else{
+//              res.status(404).send({
+//                 message : "products not found",
+//              });
+//          }
+//     }catch(error){
+//         res.status(500).send({message : error.message});
+//     }
 
     
-});
+// });
 
 
 // GET: /products/:id -> Return a specific product
-app.get('/products/:id', async (req,res) => {
+// app.get('/products/:id', async (req,res) => {
+//     try{
+//          const id = req.params.id;
+//          //const product = await product.find({_id: id});   // modelname.find() to find the products from db.Find returns a array.
+//          const product = await product.findOne({_id: id});  // findOne returns object.Returns everything
+//         //  const product = await product.findOne({_id: id}).select({
+//         //     title: 1,
+//         //     _id : 0
+//         //  });                   // for specific things we use select.1 means true .Here only the title will be displayed.0 means dont display.
+
+//         //  res.send(product);
+
+
+//          if(product){
+//             res.status(200).send(product);
+//          }
+//          else{
+//              res.status(404).send({
+//                 message : "product not found",
+//              });
+//          }
+//     }catch(error){
+//         res.status(500).send({message : error.message});
+//     }
+
+    
+// });
+
+
+
+// GET: /products -> Return all the products using query operator
+app.get('/products', async (req,res) => {
     try{
-         const id = req.params.id;
-         //const product = await product.find({_id: id});   // modelname.find() to find the products from db.Find returns a array.
-         //const product = await product.findOne({_id: id});  // findOne returns object.Returns everything
-         const product = await product.findOne({_id: id}).select({
-            title: 1,
-            _id : 0
-         });                   // for specific things we use select.1 means true .Here only the title will be displayed.0 means dont display.
+         const price = req.query.price;
+         //const products = await product.find({price : {$eq : 14000}});  // lt = less than ,gt = greater than , eq = equal ,ne = not equal ,gte,lte,in[array of values]
+         //for user input price
+         const products = await product.find({price : {$gt : price}});
 
-         res.send(product);
-
-
-         if(product){
-            res.status(200).send(product);
+         if(products){
+            res.status(200).send(products);
          }
          else{
              res.status(404).send({

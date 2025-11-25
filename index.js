@@ -89,23 +89,23 @@ app.get('/',(req,res)=>{
 
 
 // // GET: /products -> Return all the products
-// app.get('/products', async (req,res) => {
-//     try{
-//          const products = await Product.find();  // modelname.find() to find the products from db
-//          if(products){
-//             res.status(200).send(products);
-//          }
-//          else{
-//              res.status(404).send({
-//                 message : "products not found",
-//              });
-//          }
-//     }catch(error){
-//         res.status(500).send({message : error.message});
-//     }
+app.get('/products', async (req,res) => {
+    try{
+         const products = await Product.find();  // modelname.find() to find the products from db
+         if(products){
+            res.status(200).send(products);
+         }
+         else{
+             res.status(404).send({
+                message : "products not found",
+             });
+         }
+    }catch(error){
+        res.status(500).send({message : error.message});
+    }
 
     
-// });
+});
 
 
 // GET: /products/:id -> Return a specific product
@@ -171,31 +171,71 @@ app.get('/',(req,res)=>{
 
 //DELETE: /products/:id => delete a product based on id
 
-app.delete('/products/:id',async (req,res) => {
+// app.delete('/products/:id',async (req,res) => {
+//     try{
+//         const id = req.params.id;
+//         const deletedProduct = await Product.findByIdAndDelete({_id : id});
+//         if(deletedProduct){
+//             res.status(200).send({
+//                 success : true,
+//                 message : "product deleted",
+//                 data : product,
+
+//             });
+//         }else{
+//             res.status(404).send({
+//                 success : false,
+//                 message : "product can not be deleted",
+
+//             });
+//         }
+
+
+//     }catch(error){
+//         console.log("Error Occured");
+//          res.status(500).send({message : error.message});
+//      }
+// });
+
+
+// update a product by id
+app.put("/products/:id", async (req,res) => {
     try{
         const id = req.params.id;
-        const deletedProduct = await Product.findByIdAndDelete({_id : id});
-        if(deletedProduct){
+        const updatedProduct = await Product.findByIdAndUpdate( 
+            {_id : id} , 
+            {
+            $set : {
+                title : req.body.title,
+                price : req.body.price,
+                description : req.body.description,
+                },
+             
+             },
+            {new : true}  
+    );
+
+        if(updatedProduct){
             res.status(200).send({
                 success : true,
-                message : "product deleted",
-                data : product,
+                message : "product updated",
+                data : updatedProduct,
 
             });
         }else{
             res.status(404).send({
                 success : false,
-                message : "product can not be deleted",
+                message : "product can not be updated",
 
             });
         }
 
-
     }catch(error){
-        console.log("Error Occured");
          res.status(500).send({message : error.message});
      }
+    
 });
+
 
 
 

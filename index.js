@@ -34,7 +34,7 @@ const productsSchema = new mongoose.Schema({
 
 //DATABASE => COLLECTIONS(TABLE) => DOCUMENT(ID,TITLE..)
 // product model
-const product = mongoose.model("products",productsSchema); // Products = Collection , productsSchema = Which schema Products collection is going to follow
+const Product = mongoose.model("products",productsSchema); // Products = Collection , productsSchema = Which schema Products collection is going to follow
  
 
 // mongodb connection
@@ -69,7 +69,7 @@ app.get('/',(req,res)=>{
 
 //         //const{title,price,description} = req.body;
 
-//         const newProduct =  new product({   // here product is the model name
+//         const newProduct =  new Product({   // here product is the model name
 //             title : req.body.title,
 //             price : req.body.price,
 //             description : req.body.description,
@@ -91,7 +91,7 @@ app.get('/',(req,res)=>{
 // // GET: /products -> Return all the products
 // app.get('/products', async (req,res) => {
 //     try{
-//          const products = await product.find();  // modelname.find() to find the products from db
+//          const products = await Product.find();  // modelname.find() to find the products from db
 //          if(products){
 //             res.status(200).send(products);
 //          }
@@ -113,7 +113,7 @@ app.get('/',(req,res)=>{
 //     try{
 //          const id = req.params.id;
 //          //const product = await product.find({_id: id});   // modelname.find() to find the products from db.Find returns a array.
-//          const product = await product.findOne({_id: id});  // findOne returns object.Returns everything
+//          const product = await Product.findOne({_id: id});  // findOne returns object.Returns everything
 //         //  const product = await product.findOne({_id: id}).select({
 //         //     title: 1,
 //         //     _id : 0
@@ -140,26 +140,61 @@ app.get('/',(req,res)=>{
 
 
 // GET: /products -> Return all the products using query operator
-app.get('/products', async (req,res) => {
-    try{
-         const price = req.query.price;
-         //const products = await product.find({price : {$eq : 14000}});  // lt = less than ,gt = greater than , eq = equal ,ne = not equal ,gte,lte,in[array of values]
-         //for user input price
-         const products = await product.find({price : {$gt : price}});
+// app.get('/products', async (req,res) => {
+//     try{
+//          const price = req.query.price;
+//          let products;
+//          //const products = await product.find({price : {$eq : 14000}});  // lt = less than ,gt = greater than , eq = equal ,ne = not equal ,gte,lte,in[array of values]
+//          //for user input price
+//          if(price){
+//               products = await product.find({price : {$gt : price}});
+//          }else{
+//               products = await product.find();
+//          }
+         
 
-         if(products){
-            res.status(200).send(products);
-         }
-         else{
-             res.status(404).send({
-                message : "products not found",
-             });
-         }
-    }catch(error){
-        res.status(500).send({message : error.message});
-    }
+//          if(products){
+//             res.status(200).send(products);
+//          }
+//          else{
+//              res.status(404).send({
+//                 message : "products not found",
+//              });
+//          }
+//     }catch(error){
+//         res.status(500).send({message : error.message});
+//     }
 
     
+// });
+
+
+//DELETE: /products/:id => delete a product based on id
+
+app.delete('/products/:id',async (req,res) => {
+    try{
+        const id = req.params.id;
+        const deletedProduct = await Product.findByIdAndDelete({_id : id});
+        if(deletedProduct){
+            res.status(200).send({
+                success : true,
+                message : "product deleted",
+                data : product,
+
+            });
+        }else{
+            res.status(404).send({
+                success : false,
+                message : "product can not be deleted",
+
+            });
+        }
+
+
+    }catch(error){
+        console.log("Error Occured");
+         res.status(500).send({message : error.message});
+     }
 });
 
 
